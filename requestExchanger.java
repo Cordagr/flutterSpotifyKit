@@ -32,18 +32,23 @@ public class SpotifyAuthService {
                 // Handle the error here
             }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                if (response.isSuccessful()) {
-                    String responseBody = response.body().string();
-                    // Parse the response and extract the access token
-                    // You might want to use a JSON library such as Gson or Jackson to parse the response
-                    System.out.println("Response: " + responseBody);
-                } else {
-                    // Handle the error here
-                    System.err.println("Error: " + response.code() + " - " + response.message());
-                }
-            }
+          public void onResponse(Call call, Response response) throws IOException {
+        if (response.isSuccessful()) {
+        String responseBody = response.body().string();
+        JsonObject json = JsonParser.parseString(responseBody).getAsJsonObject();
+        String accessToken = json.get("access_token").getAsString();
+        String refreshToken = json.get("refresh_token").getAsString();
+        int expiresIn = json.get("expires_in").getAsInt();
+
+        // Store the access token and refresh token securely
+        System.out.println("Access Token: " + accessToken);
+        System.out.println("Refresh Token: " + refreshToken);
+        System.out.println("Expires In: " + expiresIn);
+        } else {
+        // Handle the error here
+        System.err.println("Error: " + response.code() + " - " + response.message());
+    }
+}
         });
     }
 }
